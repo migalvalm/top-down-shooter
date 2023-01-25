@@ -1,0 +1,184 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://assets/textures/TECH_0A.png" type="Texture" id=1]
+[ext_resource path="res://assets/textures/TECH_0A_n.png" type="Texture" id=2]
+[ext_resource path="res://assets/textures/TECH_1A.png" type="Texture" id=3]
+[ext_resource path="res://assets/textures/TECH_1A_n.png" type="Texture" id=4]
+
+[sub_resource type="OccluderPolygon2D" id=7]
+closed = false
+polygon = PoolVector2Array( -33, -20, 0, -22, 33, -20 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 32, 33 )
+
+[sub_resource type="StreamTexture" id=14]
+load_path = "res://.import/TECH_0A.png-f37183f01da6786ca16360b4b0cc137a.stex"
+
+[sub_resource type="StreamTexture" id=15]
+load_path = "res://.import/TECH_0A_n.png-75882aae3274f269781d2cf95845d47d.stex"
+
+[sub_resource type="OccluderPolygon2D" id=10]
+closed = false
+polygon = PoolVector2Array( 32, 23, 1.31134e-06, 29, -32, 24 )
+
+[sub_resource type="StreamTexture" id=11]
+load_path = "res://.import/TECH_0A.png-f37183f01da6786ca16360b4b0cc137a.stex"
+
+[sub_resource type="StreamTexture" id=12]
+load_path = "res://.import/TECH_0A_n.png-75882aae3274f269781d2cf95845d47d.stex"
+
+[sub_resource type="OccluderPolygon2D" id=13]
+closed = false
+polygon = PoolVector2Array( 32, 24, -1.26763e-06, 28, -32, 25 )
+
+[sub_resource type="OccluderPolygon2D" id=6]
+closed = false
+polygon = PoolVector2Array( -32, 23, 0, 27, 31, 23 )
+
+[sub_resource type="StreamTexture" id=16]
+load_path = "res://.import/TECH_0A.png-f37183f01da6786ca16360b4b0cc137a.stex"
+
+[sub_resource type="StreamTexture" id=17]
+load_path = "res://.import/TECH_0A_n.png-75882aae3274f269781d2cf95845d47d.stex"
+
+[sub_resource type="OccluderPolygon2D" id=18]
+closed = false
+polygon = PoolVector2Array( 32, 23, 1.31134e-06, 29, -32, 24 )
+
+[sub_resource type="StreamTexture" id=19]
+load_path = "res://.import/TECH_0A.png-f37183f01da6786ca16360b4b0cc137a.stex"
+
+[sub_resource type="StreamTexture" id=20]
+load_path = "res://.import/TECH_0A_n.png-75882aae3274f269781d2cf95845d47d.stex"
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Wall_N" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+normal_map = ExtResource( 2 )
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_N"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 7 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_N"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_N/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )
+
+[node name="Wall_L" type="Sprite" parent="."]
+rotation = 1.5708
+texture = SubResource( 14 )
+normal_map = SubResource( 15 )
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_L"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 10 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_L"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_L/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )
+
+[node name="Wall_R" type="Sprite" parent="."]
+rotation = -1.5708
+texture = SubResource( 11 )
+normal_map = SubResource( 12 )
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_R"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 13 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_R"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_R/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )
+
+[node name="Wall_S" type="Sprite" parent="."]
+texture = ExtResource( 3 )
+normal_map = ExtResource( 4 )
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="Wall_S"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 6 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_S"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_S/StaticBody2D"]
+position = Vector2( 0, 9.53674e-07 )
+shape = SubResource( 2 )
+
+[node name="Wall_LS" type="Sprite" parent="."]
+rotation = 0.785398
+texture = SubResource( 16 )
+normal_map = SubResource( 17 )
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_LS"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 18 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_LS"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_LS/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )
+
+[node name="Wall_RS" type="Sprite" parent="."]
+rotation = -0.785398
+scale = Vector2( 1, 1 )
+texture = SubResource( 16 )
+normal_map = SubResource( 17 )
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_RS"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 18 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_RS"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_RS/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )
+
+[node name="Wall_NL" type="Sprite" parent="."]
+rotation = -0.785398
+texture = ExtResource( 1 )
+normal_map = ExtResource( 2 )
+flip_v = true
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_NL"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 7 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_NL"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_NL/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )
+
+[node name="Wall_NS" type="Sprite" parent="."]
+rotation = 0.785398
+texture = SubResource( 19 )
+normal_map = SubResource( 20 )
+flip_v = true
+
+[node name="LightOccluder2D2" type="LightOccluder2D" parent="Wall_NS"]
+position = Vector2( 0, 1 )
+occluder = SubResource( 7 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Wall_NS"]
+collision_mask = 14
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall_NS/StaticBody2D"]
+position = Vector2( 0, -0.999999 )
+shape = SubResource( 2 )

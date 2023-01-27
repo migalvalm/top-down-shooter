@@ -28,8 +28,7 @@ var speed: int = movespeed
 func _ready() -> void:
 	footstep_rng.randomize()
 	Input.set_default_cursor_shape(3)
-	
-	
+
 func get_mouse_input() -> void:
 	var mousePos = get_global_mouse_position()
 	var space = get_world_2d().direct_space_state
@@ -61,7 +60,7 @@ func process_movement():
 				step(0.3)
 			states.WALK:
 				speed = movespeed
-				step(0.4)
+				step(0.5)
 				
 	get_mouse_input()
 	
@@ -101,7 +100,7 @@ func step(step_time: float) -> void:
 	animation.play("walk")
 	if walk_timer.is_stopped() and !audio_player.playing:
 		audio_player.pitch_scale = rand_range(0.4, 0.5)
-		var filename_number = footstep_rng.randi_range(1,4)
+		var filename_number = [1,3][RandomNumberGenerator.new().randi_range(0,1)]
 		audio_player.stream = SoundPlayer.load_audio_file(footstep_file_base + str(filename_number) + ".wav", false)
 		audio_player.play()
 		walk_timer.start(step_time)

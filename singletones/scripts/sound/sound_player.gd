@@ -18,13 +18,19 @@ func play_sound(sound, volume = 1.0, pitch_scale = 1.0) -> void:
 			audioStreamPlayer.play()
 			break
 
-func load_audio_file(path, loop, type = types.WAV):
+func load_audio_file(path, loop, type = ".wav"):
 	var sfx = load(path)
-	print(path)
-	if type == types.WAV:
-		sfx.loop_mode = 1 if loop else 0
-	elif type == types.OGG:
-		sfx.loop = loop
+	
+	match get_audio_file_type(type):
+		types.WAV:
+			sfx.loop_mode = 1 if loop else 0
+		types.OGG:
+			sfx.loop = loop
 	
 	return sfx
 
+func get_audio_file_type(type):
+	if type == ".wav": 
+		return SoundPlayer.types.WAV 
+	else: 
+		return SoundPlayer.types.OGG

@@ -7,12 +7,12 @@ enum states {
 	RUN
 }
 
-onready var step_player: AudioStreamPlayer2D = get_node("StepPlayer")
+onready var step_player: AudioStreamPlayer2D = get_node("Movement/StepPlayer")
 onready var animation: AnimationPlayer = get_node("Animation")
-onready var walk_timer: Timer = get_node("WalkTimer")
+onready var walk_timer: Timer = get_node("Movement/WalkTimer")
 onready var flashlight_light: Light2D = get_node("Flashlight/Light")
 onready var flashlight_area: Area2D = get_node("Flashlight/Area")
-onready var bullet_spawn_point: Position2D = get_node("BulletSpawnPoint")
+onready var bullet_spawn_point: Position2D = get_node("Gun/BulletSpawnPoint")
 
 export var movespeed: int = 80
 export var runspeed: int = 130
@@ -21,6 +21,7 @@ export var cameraspeed: float = 0.8
 export var bullet_speed: int = 2000
 export var footstep_file_base: String = "res://assets/sounds/steps/FootstepsConcrete"
 export var bullet_file_base: String = "res://assets/sounds/bang-sfx/bang_"
+export(Array) var bullet_soundfile_numbers: Array = ["07"]
 
 var bullet: Resource  = preload('res://scenes/entities/bullet.tscn')
 var footstep_rng = RandomNumberGenerator.new()
@@ -31,22 +32,11 @@ var state: int = states.WALK
 var aiming: bool = false
 var speed: int = movespeed
 
+### Engine Functions
 func _ready() -> void:
 	footstep_rng.randomize()
 	bullet_rng.randomize()
 	Input.set_default_cursor_shape(3)
-
-func get_mouse_input() -> void:
-	var mousePos = get_global_mouse_position()
-	var space = get_world_2d().direct_space_state
-
-	if space.intersect_point(mousePos, 1):
-		if "Player" in space.intersect_point(mousePos, 1).pop_front().collider.name:
-			speed = 0
-		if "WallMap" in space.intersect_point(mousePos, 1).pop_front().collider.name:
-			flashlight_light
-			
-	look_at(mousePos)
 
 func _physics_process(delta: float) -> void:
 	process_movement()
@@ -73,7 +63,7 @@ func process_movement():
 				speed = aim_movespeed
 				step(0.9)
 				
-	get_mouse_input()
+	process_mouse_input()
 	
 	move_and_slide(velocity.normalized() * speed)
 
@@ -84,7 +74,19 @@ func process_actions() -> void:
 	process_flashlight()
 	if !is_aiming(): process_run()
 
-### Input Validators
+### Input Validators - PlayerInput node
+func process_mouse_input() -> void:
+	var mousePos = get_global_mouse_position()
+	var space = get_world_2d().direct_space_state
+
+	if space.intersect_point(mousePos, 1):
+		if "Player" in space.intersect_point(mousePos, 1).pop_front().collider.name:
+			speed = 0
+		if "WallMap" in space.intersect_point(mousePos, 1).pop_front().collider.name:
+			flashlight_light
+			
+	look_at(mousePos)
+	
 func process_aim() -> void:
 	if Input.is_action_pressed("aim"):
 		animation.play("aim")
@@ -95,28 +97,7 @@ func process_aim() -> void:
 
 func process_fire() -> void:
 	if Input.is_action_just_pressed("fire") and is_aiming():
-		#Instance and set position
-		var bullet_instance: RigidBody2D = bullet.instance()
-		bullet_instance.position = bullet_spawn_point.global_position
-		
-		#Generate which sound to play
-		var filename_number = ["01", "07"][bullet_rng.randi_range(0, 1)]
-		SoundPlayer.play_sound(
-			SoundPlayer.load_audio_file(
-				bullet_file_base + str(filename_number) + ".ogg", 
-				false, 
-				SoundPlayer.types.OGG
-			),
-			-1,
-			rand_range(0.8, 0.7)
-		)
-		
-		#Apply rotation and impluse
-		bullet_instance.rotation_degrees = rotation_degrees
-		bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(rotation))
-		
-		#Instance it
-		get_tree().get_root().call_deferred("add_child", bullet_instance)
+		shoot()
 
 func process_flashlight() -> void:	
 	if Input.is_action_just_pressed("toggle_flashlight"):
@@ -130,23 +111,43 @@ func process_run() -> void:
 	elif !Input.is_action_pressed("run") and is_running():
 		state = states.WALK
 
-### Behavior Functions
+### Action Functions - PlayerAction node
 func step(step_time: float) -> void:
 	animation.play("walk")
 	if walk_timer.is_stopped() and !step_player.playing:
 		step_player.pitch_scale = rand_range(0.3, 0.4)
-		var filename_number = [1,3][footstep_rng.randi_range(0,1)]
-		step_player.stream = SoundPlayer.load_audio_file(
-				footstep_file_base + str(filename_number) + ".wav", 
-				false
-			)
+		step_player.stream = get_random_soundfile(footstep_rng, [1,3], footstep_file_base)
 		step_player.play()
 		walk_timer.start(step_time)
+
+func shoot() -> void:
+	#Create and Place bullet instance
+	var bullet_instance: RigidBody2D = bullet.instance()
+	bullet_instance.position = bullet_spawn_point.global_position
+	
+	#Generate and play sound
+	SoundPlayer.play_sound(
+		get_random_soundfile(
+			bullet_rng, 
+			bullet_soundfile_numbers,
+			bullet_file_base,
+			".ogg"
+		),
+		-4,
+		rand_range(0.8, 0.95)
+	)
+	
+	#Apply rotation and impluse
+	bullet_instance.rotation_degrees = rotation_degrees
+	bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(rotation))
+	
+	#Render it
+	get_tree().get_root().call_deferred("add_child", bullet_instance)
 
 func kill():
 	get_tree().reload_current_scene()
 
-### Helpers Functions
+### Helpers Functions - HelperClass
 func calculate_velocity() -> Vector2:
 	var velocity = Vector2()
 	var vel_x = Input.get_action_strength("right") - Input.get_action_strength("left")
@@ -169,7 +170,16 @@ func calculate_velocity() -> Vector2:
 	
 	return velocity
 
-### Helpers State
+func get_random_soundfile(rng, files_numbers, base_path, file_type = ".wav"):
+	var filename_number = files_numbers[rng.randi_range(0, files_numbers.size()-1)]
+	
+	return SoundPlayer.load_audio_file(
+		base_path + str(filename_number) + file_type, 
+		false, 
+		file_type
+	)
+
+### Helpers State - PlayerState node
 func is_aiming() -> bool:
 	return state == states.AIM
 

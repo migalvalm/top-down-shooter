@@ -38,10 +38,8 @@ func _physics_process(delta: float) -> void:
 				
 				motion = position.direction_to(wander_controller.target_position) * speed * delta
 				
-				print(motion)
 				move_and_collide(motion)
 			
-				print(global_position.distance_to(wander_controller.target_position))
 				if global_position.distance_to(wander_controller.target_position) <= 4:
 					state = states.IDLE
 					wander_controller.start_wander_timer(rand_range(1, 3))
@@ -70,7 +68,6 @@ func on_DetectionArea_body_entered(body: Node) -> void:
 		"Player":
 			player_ref = body
 			state = states.CHASE
-
 		
 func on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int, _local_shape_index: int) -> void:
 	match area.get_parent().name:

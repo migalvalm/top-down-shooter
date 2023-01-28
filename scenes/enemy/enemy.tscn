@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/enemy/enemy.gd" type="Script" id=1]
 [ext_resource path="res://assets/enemy/enemy.png" type="Texture" id=2]
@@ -14,9 +14,6 @@ extents = Vector2( 70.9612, 25.7833 )
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 75.8259, 28.5109 )
 
-[sub_resource type="CapsuleShape2D" id=6]
-radius = 24.0
-
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 31, 29 )
 
@@ -31,7 +28,6 @@ texture = ExtResource( 2 )
 normal_map = ExtResource( 3 )
 
 [node name="DetectionArea" type="Area2D" parent="Sprite"]
-visible = false
 collision_layer = 4
 collision_mask = 18
 
@@ -49,19 +45,10 @@ position = Vector2( 42.8795, -24.0494 )
 rotation = 2.63251
 shape = SubResource( 3 )
 
-[node name="WallDetectionArea" type="Area2D" parent="Sprite"]
-collision_layer = 0
-
-[node name="Collision" type="CollisionShape2D" parent="Sprite/WallDetectionArea"]
-position = Vector2( 23, 0 )
-shape = SubResource( 6 )
-
 [node name="Collision" type="CollisionShape2D" parent="."]
-visible = false
 shape = SubResource( 1 )
 
 [node name="Hitbox" type="Area2D" parent="."]
-visible = false
 collision_layer = 4
 collision_mask = 11
 

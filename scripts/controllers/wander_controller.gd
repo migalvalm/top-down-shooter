@@ -11,9 +11,9 @@ var last_position;
 func update_target_position():
 	var target_vector = Vector2(rand_range(-wander_range, wander_range), rand_range(-wander_range, wander_range))
 	target_position = start_position + target_vector
-	print(target_position)
+
 	last_position = target_position
-	print(last_position)
+
 
 func get_time_left():
 	return timer.time_left

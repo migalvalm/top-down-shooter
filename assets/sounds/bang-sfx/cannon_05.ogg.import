@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/cannon_05.ogg-a614a2519125dc7e2e28305ed9c999ee.oggstr"
+
+[deps]
+
+source_file="res://assets/sounds/bang-sfx/cannon_05.ogg"
+dest_files=[ "res://.import/cannon_05.ogg-a614a2519125dc7e2e28305ed9c999ee.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

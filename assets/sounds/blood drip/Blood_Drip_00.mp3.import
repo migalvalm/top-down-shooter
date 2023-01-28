@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Blood_Drip_00.mp3-136ddfe2439822b051629a27d3c213f7.mp3str"
+
+[deps]
+
+source_file="res://assets/sounds/blood drip/Blood_Drip_00.mp3"
+dest_files=[ "res://.import/Blood_Drip_00.mp3-136ddfe2439822b051629a27d3c213f7.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

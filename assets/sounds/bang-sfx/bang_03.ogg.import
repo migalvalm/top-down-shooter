@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/bang_03.ogg-b5e9902a00b93a4372f2ed9c7a7bcecc.oggstr"
+
+[deps]
+
+source_file="res://assets/sounds/bang-sfx/bang_03.ogg"
+dest_files=[ "res://.import/bang_03.ogg-b5e9902a00b93a4372f2ed9c7a7bcecc.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

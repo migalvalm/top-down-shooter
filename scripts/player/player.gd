@@ -7,7 +7,7 @@ enum states {
 	RUN
 }
 
-onready var audio_player: AudioStreamPlayer2D = get_node("AudioPlayer")
+onready var step_player: AudioStreamPlayer2D = get_node("StepPlayer")
 onready var animation: AnimationPlayer = get_node("Animation")
 onready var walk_timer: Timer = get_node("WalkTimer")
 onready var flashlight_light: Light2D = get_node("Flashlight/Light")
@@ -20,9 +20,11 @@ export var aim_movespeed: int = 20
 export var cameraspeed: float = 0.8
 export var bullet_speed: int = 2000
 export var footstep_file_base: String = "res://assets/sounds/steps/FootstepsConcrete"
+export var bullet_file_base: String = "res://assets/sounds/bang-sfx/bang_"
 
 var bullet: Resource  = preload('res://scenes/entities/bullet.tscn')
 var footstep_rng = RandomNumberGenerator.new()
+var bullet_rng = RandomNumberGenerator.new()
 
 ### State Variables
 var state: int = states.WALK
@@ -31,6 +33,7 @@ var speed: int = movespeed
 
 func _ready() -> void:
 	footstep_rng.randomize()
+	bullet_rng.randomize()
 	Input.set_default_cursor_shape(3)
 
 func get_mouse_input() -> void:
@@ -55,7 +58,8 @@ func process_movement():
 
 	if velocity.length() == 0:
 		animation.play("idle")
-		audio_player.stop()
+		step_player.stop()
+
 		
 	if velocity.length() != 0:
 		match state:
@@ -91,11 +95,27 @@ func process_aim() -> void:
 
 func process_fire() -> void:
 	if Input.is_action_just_pressed("fire") and is_aiming():
+		#Instance and set position
 		var bullet_instance: RigidBody2D = bullet.instance()
 		bullet_instance.position = bullet_spawn_point.global_position
+		
+		#Generate which sound to play
+		var filename_number = ["01", "07"][bullet_rng.randi_range(0, 1)]
+		SoundPlayer.play_sound(
+			SoundPlayer.load_audio_file(
+				bullet_file_base + str(filename_number) + ".ogg", 
+				false, 
+				SoundPlayer.types.OGG
+			),
+			-1,
+			rand_range(0.8, 0.7)
+		)
+		
+		#Apply rotation and impluse
 		bullet_instance.rotation_degrees = rotation_degrees
 		bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(rotation))
 		
+		#Instance it
 		get_tree().get_root().call_deferred("add_child", bullet_instance)
 
 func process_flashlight() -> void:	
@@ -113,11 +133,14 @@ func process_run() -> void:
 ### Behavior Functions
 func step(step_time: float) -> void:
 	animation.play("walk")
-	if walk_timer.is_stopped() and !audio_player.playing:
-		audio_player.pitch_scale = rand_range(0.3, 0.4)
-		var filename_number = [1,3][RandomNumberGenerator.new().randi_range(0,1)]
-		audio_player.stream = SoundPlayer.load_audio_file(footstep_file_base + str(filename_number) + ".wav", false)
-		audio_player.play()
+	if walk_timer.is_stopped() and !step_player.playing:
+		step_player.pitch_scale = rand_range(0.3, 0.4)
+		var filename_number = [1,3][footstep_rng.randi_range(0,1)]
+		step_player.stream = SoundPlayer.load_audio_file(
+				footstep_file_base + str(filename_number) + ".wav", 
+				false
+			)
+		step_player.play()
 		walk_timer.start(step_time)
 
 func kill():
@@ -162,4 +185,4 @@ func on_body_entered(body: Node) -> void:
 			kill()
 
 func on_timer_timeout() -> void:
-	audio_player.stop()
+	step_player.stop()

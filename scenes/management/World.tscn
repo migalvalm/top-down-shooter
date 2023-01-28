@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scenes/enemy/enemy.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/resources/floor.tres" type="TileSet" id=2]
+[ext_resource path="res://scenes/resources/floor_metal.tres" type="TileSet" id=2]
 [ext_resource path="res://scenes/resources/walls.tres" type="TileSet" id=3]
 [ext_resource path="res://scenes/player/player.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/management/level.gd" type="Script" id=5]

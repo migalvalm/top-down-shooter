@@ -1,0 +1,37 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "#Floor": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "#Tilelist1": {
+            "scaleInDock": 0.5
+        }
+    },
+    "last.imagePath": "C:/Repos/gamedev/top-down-shooter/assets/tilesets",
+    "map.height": 32,
+    "map.width": 32,
+    "openFiles": [
+    ],
+    "project": "testMap.tiled-project",
+    "recentFiles": [
+    ],
+    "tileset.embedInMap": true,
+    "tileset.margin": 1,
+    "tileset.spacing": 1,
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    }
+}

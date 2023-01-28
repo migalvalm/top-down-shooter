@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/background_4_n.png" type="Texture" id=1]
+[ext_resource path="res://assets/background_4.png" type="Texture" id=2]
+
+[node name="floor_metal" type="Node2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+normal_map = ExtResource( 1 )

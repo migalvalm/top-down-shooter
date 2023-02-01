@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[sub_resource type="Shader" id=8]
+[sub_resource type="Shader" id=2]
 code = "shader_type canvas_item;
 
 // Amount of detail.
@@ -41,52 +41,57 @@ void fragment() {
 	COLOR = mix(vec4(0.0), fog_color, rand(UV + motion));
 }"
 
-[sub_resource type="OpenSimplexNoise" id=4]
+[sub_resource type="OpenSimplexNoise" id=7]
 seed = 101
 octaves = 6
 period = 25.0
 persistence = 0.755
 lacunarity = 0.67
 
-[sub_resource type="NoiseTexture" id=9]
+[sub_resource type="NoiseTexture" id=5]
 flags = 71
 width = 200
 height = 200
 seamless = true
 bump_strength = 27.6
-noise = SubResource( 4 )
+noise = SubResource( 7 )
 noise_offset = Vector2( 2, 1 )
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=8]
 render_priority = 100
-shader = SubResource( 8 )
+shader = SubResource( 2 )
 shader_param/octaves = 10
 shader_param/starting_amplitude = 0.5
 shader_param/starting_frequency = 2.0
 shader_param/shift = 0.0
 shader_param/velocity = Vector2( 0.002, 0 )
 shader_param/fog_color = Color( 1, 1, 1, 1 )
-shader_param/noise = SubResource( 9 )
+shader_param/noise = SubResource( 5 )
 
-[sub_resource type="OpenSimplexNoise" id=10]
+[sub_resource type="OpenSimplexNoise" id=6]
 seed = 1
 octaves = 5
 period = 145.7
 
-[sub_resource type="NoiseTexture" id=7]
+[sub_resource type="NoiseTexture" id=9]
 width = 1820
 height = 1420
 seamless = true
 as_normalmap = true
-noise = SubResource( 10 )
+noise = SubResource( 6 )
 
-[node name="Fog" type="Node2D"]
+[node name="Node2D" type="ParallaxBackground"]
 
-[node name="fog_shader" type="TextureRect" parent="."]
-material = SubResource( 3 )
+[node name="ParallaxLayer" type="ParallaxLayer" parent="."]
+z_index = 100
+z_as_relative = false
+
+[node name="fog_shader" type="TextureRect" parent="ParallaxLayer"]
+material = SubResource( 8 )
 margin_right = 600.0
 margin_bottom = 1200.0
 grow_horizontal = 0
-texture = SubResource( 7 )
+size_flags_vertical = 3
+texture = SubResource( 9 )
 expand = true
 flip_h = true

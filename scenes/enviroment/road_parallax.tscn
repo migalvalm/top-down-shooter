@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/roads/background-1.png" type="Texture" id=1]
+[ext_resource path="res://scripts/enviroment/road_parallax.gd" type="Script" id=2]
+
+[node name="RoadParallax" type="ParallaxBackground"]
+layer = 2
+script = ExtResource( 2 )
+
+[node name="RoadLayer" type="ParallaxLayer" parent="."]
+motion_mirroring = Vector2( 0, 560 )
+
+[node name="Sprite" type="Sprite" parent="RoadLayer"]
+show_behind_parent = true
+scale = Vector2( 0.714286, 0.863077 )
+z_as_relative = false
+texture = ExtResource( 1 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 840, 650 )

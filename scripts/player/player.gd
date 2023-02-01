@@ -12,7 +12,8 @@ onready var animation: AnimationPlayer = get_node("Animation")
 onready var walk_timer: Timer = get_node("Movement/WalkTimer")
 onready var flashlight_light: Light2D = get_node("Flashlight/Light")
 onready var flashlight_area: Area2D = get_node("Flashlight/Area")
-onready var bullet_spawn_point: Position2D = get_node("Gun/BulletSpawnPoint")
+onready var gun: Node2D = get_node("Gun")
+onready var double_gun: Node2D = get_node("DoubleGun")
 
 export var movespeed: int = 80
 export var runspeed: int = 130
@@ -29,18 +30,25 @@ var bullet_rng = RandomNumberGenerator.new()
 
 ### State Variables
 var state: int = states.WALK
+var weapon_inventory: Array = []
+var selected_weapon: Node2D = null
 var aiming: bool = false
 var speed: int = movespeed
+var speed_velocity: Vector2 = Vector2.ZERO
 
 ### Engine Functions
 func _ready() -> void:
 	footstep_rng.randomize()
 	bullet_rng.randomize()
 	Input.set_default_cursor_shape(3)
+	
+	weapon_inventory = [gun, double_gun]
+	selected_weapon = weapon_inventory[0]
 
 func _physics_process(delta: float) -> void:
 	process_movement()
 	process_actions()
+	
 
 ### Movement Handler
 func process_movement():
@@ -55,17 +63,17 @@ func process_movement():
 		match state:
 			states.RUN:
 				speed = runspeed
-				step(0.35)
+				step(0.25, "run")
 			states.WALK:
 				speed = movespeed
-				step(0.4)
+				step(0.4, "walk")
 			states.AIM:
 				speed = aim_movespeed
 				step(0.9)
 				
 	process_mouse_input()
 	
-	move_and_slide(velocity.normalized() * speed)
+	speed_velocity = move_and_slide(velocity.normalized() * speed)
 
 ### Action Management
 func process_actions() -> void:
@@ -81,7 +89,7 @@ func process_mouse_input() -> void:
 
 	if space.intersect_point(mousePos, 1):
 		if "Player" in space.intersect_point(mousePos, 1).pop_front().collider.name:
-			speed = 0
+			speed = 20
 		if "WallMap" in space.intersect_point(mousePos, 1).pop_front().collider.name:
 			flashlight_light
 			
@@ -89,7 +97,11 @@ func process_mouse_input() -> void:
 	
 func process_aim() -> void:
 	if Input.is_action_pressed("aim"):
-		animation.play("aim")
+		if selected_weapon.name == "DoubleGun":
+			animation.play("aim_2")
+		else:
+			animation.play("aim_1")
+			
 		state = states.AIM
 	
 	if Input.is_action_just_released("aim"):
@@ -97,7 +109,7 @@ func process_aim() -> void:
 
 func process_fire() -> void:
 	if Input.is_action_just_pressed("fire") and is_aiming():
-		shoot()
+		shoot(selected_weapon)
 
 func process_flashlight() -> void:	
 	if Input.is_action_just_pressed("toggle_flashlight"):
@@ -112,37 +124,49 @@ func process_run() -> void:
 		state = states.WALK
 
 ### Action Functions - PlayerAction node
-func step(step_time: float) -> void:
-	animation.play("walk")
+func step(step_time: float, step_animation = "") -> void:
+	if !step_animation.empty():
+		animation.play(step_animation) 
+		
+	animation.play(step_animation)
 	if walk_timer.is_stopped() and !step_player.playing:
 		step_player.pitch_scale = rand_range(0.3, 0.4)
 		step_player.stream = get_random_soundfile(footstep_rng, [1,3], footstep_file_base)
 		step_player.play()
 		walk_timer.start(step_time)
 
-func shoot() -> void:
+func shoot(gun) -> void:
 	#Create and Place bullet instance
-	var bullet_instance: RigidBody2D = bullet.instance()
-	bullet_instance.position = bullet_spawn_point.global_position
+	var bullet_instances: Array = []
+	var spawn_positions: Array = gun.get_children()
 	
-	#Generate and play sound
-	SoundPlayer.play_sound(
-		get_random_soundfile(
-			bullet_rng, 
-			bullet_soundfile_numbers,
-			bullet_file_base,
-			".ogg"
-		),
-		-4,
+	for position in spawn_positions:
+		if position.name.match("SpawnPoint?"):
+			var bullet_instance = bullet.instance()
+			bullet_instance.position = position.global_position
+			bullet_instances.push_back(bullet_instance)
+	
+	for bullet_instance in bullet_instances:
+
+		#Generate and play sound
+		SoundPlayer.play_sound(
+			get_random_soundfile(
+				bullet_rng, 
+				bullet_soundfile_numbers,
+				bullet_file_base,
+				".ogg"
+			),
+			-4,
 		rand_range(0.8, 0.95)
-	)
-	
-	#Apply rotation and impluse
-	bullet_instance.rotation_degrees = rotation_degrees
-	bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(rotation))
-	
-	#Render it
-	get_tree().get_root().call_deferred("add_child", bullet_instance)
+		)
+		
+		#Apply rotation and impluse
+		bullet_instance.rotation_degrees = rotation_degrees
+		bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(rotation))
+		
+		#Render it
+		get_tree().get_root().call_deferred("add_child", bullet_instance)
+		
 
 func kill():
 	get_tree().reload_current_scene()

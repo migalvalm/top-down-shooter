@@ -7,8 +7,8 @@ onready var reload_timer = get_node("ReloadTimer")
 var bullet_rng = RandomNumberGenerator.new()
 var bullet = preload("res://scenes/entities/bullet.tscn")
 
-export var weapon_ammo = 7
-export var bullet_damage = 10
+export var weapon_ammo: int
+export var bullet_damage: int = 10
 export var impact_vector: Vector2 = Vector2(0,30)
 export var reload_time: float = 0.5
 export var bullet_speed: int = 2000
@@ -23,15 +23,24 @@ signal no_ammo
 
 func _ready() -> void:
 	bullet_rng.randomize()	
+	current_ammo = weapon_ammo
+
+func _process(delta) -> void:
+	print(is_reloading())
 	
 func fire():
 	can_shoot()
 
 func can_shoot():
+	print()
 	print("Weapon Current Ammo: ", current_ammo)
 	print("Weapon Reloading: ", reloading)
-	if current_ammo <= 0 and !reloading: emit_signal("no_ammo")
-	elif reloading: pass
+	
+	print("Emit signal:", current_ammo <= 0 and !reloading)
+	if current_ammo <= 0 and !reloading: 
+		emit_signal("no_ammo")
+		return
+	elif reloading: return
 	else: shoot()
 	
 func shoot():	
@@ -42,11 +51,17 @@ func shoot():
 		if position.name.match("SpawnPoint?"):
 			var bullet_instance = bullet.instance()
 			
-			print("bullet: ", position.global_position)
 			bullet_instance.position = position.global_position
 			
 			bullet_instances.push_back(bullet_instance)
-			
+		
+	print("bullets are less that current ammo:", bullet_instances.size() - current_ammo < 0)
+	if current_ammo - bullet_instances.size() >= 0:
+		current_ammo -= bullet_instances.size()
+	elif current_ammo - bullet_instances.size() < 0:
+		current_ammo = 0
+		emit_signal("no_ammo")
+		return
 	
 	for bullet_instance in bullet_instances:
 		#Generate and play sound
@@ -67,8 +82,7 @@ func shoot():
 	
 		get_tree().get_root().call_deferred("add_child", bullet_instance)
 	
-	current_ammo -= bullet_instances.size()
-	
+	print("Weapon Current Ammo After Shoot: ", current_ammo)
 	#Impact
 	get_player().move_and_slide(
 		(Vector2(global_position.x, global_position.y).normalized() + 
@@ -83,7 +97,7 @@ func aim(animation_player: AnimationPlayer):
 	pass
 
 func is_reloading():
-	return reloading
+	return reload_timer.time_left > 0
 	
 func get_player():
 	return get_parent().get_parent()

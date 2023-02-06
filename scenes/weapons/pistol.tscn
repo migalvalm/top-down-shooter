@@ -5,6 +5,5 @@
 
 [node name="Pistol" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
-bullet_ammo = null
 
 [node name="SpawnPoint1" type="Position2D" parent="SpawnPoints" index="0"]

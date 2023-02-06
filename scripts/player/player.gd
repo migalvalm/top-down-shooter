@@ -68,6 +68,7 @@ func process_movement():
 
 ### Action Management
 func process_actions() -> void:
+	process_equip()
 	process_aim()
 	process_fire()
 	process_flashlight()
@@ -111,6 +112,16 @@ func process_run() -> void:
 	elif !Input.is_action_pressed("run") and is_running():
 		state = states.WALK
 
+# Move this input validator function to WeaponInventoryController
+func process_equip() -> void:
+	if Input.is_action_just_pressed("weapon_1"):
+		selected_weapon = weapons[0]
+	elif Input.is_action_just_pressed("weapon_2"):
+		selected_weapon = weapons[1]
+	elif Input.is_action_just_pressed("weapon_3"):
+		selected_weapon = weapons[2]
+		
+		
 ### Action Functions - PlayerAction node
 func step(step_time: float, step_animation = "") -> void:
 	if !step_animation.empty():

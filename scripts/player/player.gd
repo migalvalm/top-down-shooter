@@ -12,21 +12,16 @@ onready var animation: AnimationPlayer = get_node("Animation")
 onready var walk_timer: Timer = get_node("Movement/WalkTimer")
 onready var flashlight_light: Light2D = get_node("Flashlight/Light")
 onready var flashlight_area: Area2D = get_node("Flashlight/Area")
-onready var gun: Node2D = get_node("Gun")
-onready var double_gun: Node2D = get_node("DoubleGun")
 
 export var movespeed: int = 80
 export var runspeed: int = 130
 export var aim_movespeed: int = 20
 export var cameraspeed: float = 0.8
-export var bullet_speed: int = 2000
 export var footstep_file_base: String = "res://assets/sounds/steps/FootstepsConcrete"
-export var bullet_file_base: String = "res://assets/sounds/bang-sfx/bang_"
-export(Array) var bullet_soundfile_numbers: Array = ["07"]
 
-var bullet: Resource  = preload('res://scenes/entities/bullet.tscn')
+onready var weapons: Array = get_node("Weapons").get_children()
+
 var footstep_rng = RandomNumberGenerator.new()
-var bullet_rng = RandomNumberGenerator.new()
 
 ### State Variables
 var state: int = states.WALK
@@ -39,16 +34,13 @@ var speed_velocity: Vector2 = Vector2.ZERO
 ### Engine Functions
 func _ready() -> void:
 	footstep_rng.randomize()
-	bullet_rng.randomize()
 	Input.set_default_cursor_shape(3)
 	
-	weapon_inventory = [gun, double_gun]
-	selected_weapon = weapon_inventory[0]
+	equip_weapon(weapons[0])
 
 func _physics_process(delta: float) -> void:
 	process_movement()
 	process_actions()
-	
 
 ### Movement Handler
 func process_movement():
@@ -57,7 +49,6 @@ func process_movement():
 	if velocity.length() == 0:
 		animation.play("idle")
 		step_player.stop()
-
 		
 	if velocity.length() != 0:
 		match state:
@@ -97,10 +88,7 @@ func process_mouse_input() -> void:
 	
 func process_aim() -> void:
 	if Input.is_action_pressed("aim"):
-		if selected_weapon.name == "DoubleGun":
-			animation.play("aim_2")
-		else:
-			animation.play("aim_1")
+		selected_weapon.aim(animation)
 			
 		state = states.AIM
 	
@@ -128,46 +116,22 @@ func step(step_time: float, step_animation = "") -> void:
 	if !step_animation.empty():
 		animation.play(step_animation) 
 		
-	animation.play(step_animation)
 	if walk_timer.is_stopped() and !step_player.playing:
 		step_player.pitch_scale = rand_range(0.3, 0.4)
-		step_player.stream = get_random_soundfile(footstep_rng, [1,3], footstep_file_base)
+		step_player.stream = SoundPlayer.get_random_soundfile(footstep_rng, [1,3], footstep_file_base)
 		step_player.play()
 		walk_timer.start(step_time)
 
-func shoot(gun) -> void:
-	#Create and Place bullet instance
-	var bullet_instances: Array = []
-	var spawn_positions: Array = gun.get_children()
-	
-	for position in spawn_positions:
-		if position.name.match("SpawnPoint?"):
-			var bullet_instance = bullet.instance()
-			bullet_instance.position = position.global_position
-			bullet_instances.push_back(bullet_instance)
-	
-	for bullet_instance in bullet_instances:
+func shoot(gun: BaseWeapon) -> void:
+	gun.fire()
 
-		#Generate and play sound
-		SoundPlayer.play_sound(
-			get_random_soundfile(
-				bullet_rng, 
-				bullet_soundfile_numbers,
-				bullet_file_base,
-				".ogg"
-			),
-			-4,
-		rand_range(0.8, 0.95)
-		)
-		
-		#Apply rotation and impluse
-		bullet_instance.rotation_degrees = rotation_degrees
-		bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(rotation))
-		
-		#Render it
-		get_tree().get_root().call_deferred("add_child", bullet_instance)
-		
-
+func reload(gun: BaseWeapon) -> void:
+	gun.reload()
+	
+func equip_weapon(gun) -> void:
+	selected_weapon = gun
+	selected_weapon.connect("no_ammo", self, "on_no_ammo")
+	
 func kill():
 	get_tree().reload_current_scene()
 
@@ -194,15 +158,6 @@ func calculate_velocity() -> Vector2:
 	
 	return velocity
 
-func get_random_soundfile(rng, files_numbers, base_path, file_type = ".wav"):
-	var filename_number = files_numbers[rng.randi_range(0, files_numbers.size()-1)]
-	
-	return SoundPlayer.load_audio_file(
-		base_path + str(filename_number) + file_type, 
-		false, 
-		file_type
-	)
-
 ### Helpers State - PlayerState node
 func is_aiming() -> bool:
 	return state == states.AIM
@@ -220,3 +175,6 @@ func on_body_entered(body: Node) -> void:
 
 func on_timer_timeout() -> void:
 	step_player.stop()
+
+func on_no_ammo() -> void:
+	reload(selected_weapon)

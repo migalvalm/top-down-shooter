@@ -10,15 +10,15 @@ extents = Vector2( 10, 90.2809 )
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 10, 90.2809 )
 
-[node name="BaseRoadMap" type="Node2D"]
+[node name="BaseRoadMap" type="BackBufferCopy"]
 script = ExtResource( 2 )
 road_texture = ExtResource( 3 )
 
 [node name="RoadParallax" parent="." instance=ExtResource( 1 )]
 layer = -100
+visible = false
 
 [node name="WallArea" type="StaticBody2D" parent="."]
-visible = false
 collision_mask = 0
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="WallArea"]

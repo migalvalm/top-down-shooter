@@ -34,3 +34,12 @@ func get_audio_file_type(type):
 		return SoundPlayer.types.WAV 
 	else: 
 		return SoundPlayer.types.OGG
+
+func get_random_soundfile(rng, files_numbers, base_path, file_type = ".wav"):
+	var filename_number = files_numbers[rng.randi_range(0, files_numbers.size()-1)]
+	
+	return SoundPlayer.load_audio_file(
+		base_path + str(filename_number) + file_type, 
+		false, 
+		file_type
+	)

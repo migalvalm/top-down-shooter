@@ -13,7 +13,7 @@
 script = ExtResource( 5 )
 
 [node name="Player" parent="." instance=ExtResource( 4 )]
-position = Vector2( 211, 285 )
+position = Vector2( 299, 287 )
 moving_platform_apply_velocity_on_leave = 1
 
 [node name="Map" parent="." instance=ExtResource( 2 )]

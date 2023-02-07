@@ -425,7 +425,7 @@ weapon_ammo = 7
 impact_vector = Vector2( 0, 10 )
 shake_strength = 40
 
-[node name="DoublePistol" parent="Weapons" instance=ExtResource( 4 )]
+[node name="Double Pistol" parent="Weapons" instance=ExtResource( 4 )]
 weapon_ammo = 14
 impact_vector = Vector2( 0, 20 )
 shake_strength = 80

@@ -19,6 +19,7 @@ export var runspeed: int = 130
 export var aim_movespeed: int = 20
 export var cameraspeed: float = 0.8
 export var shake_run_strength: float = 10
+export var shake_walk_strength: float = 5
 export var footstep_file_base: String = "res://assets/sounds/steps/FootstepsConcrete"
 
 onready var weapons: Array = get_node("Weapons").get_children()
@@ -26,8 +27,8 @@ onready var weapons: Array = get_node("Weapons").get_children()
 var footstep_rng = RandomNumberGenerator.new()
 
 ### UI Controller
-onready var player_ui_ammo: Label = get_node("PlayerUI/Ammo/Value")
-onready var player_ui_weapon: Label = get_node("PlayerUI/Weapon/Value")
+onready var player_ui_ammo: Label = get_node("PlayerUI/Inventory/Ammo/Value")
+onready var player_ui_weapon: Label = get_node("PlayerUI/Inventory/Weapon/Value")
 
 ### State Variables
 var state: int = states.WALK
@@ -65,6 +66,7 @@ func process_movement():
 			states.WALK:
 				speed = movespeed
 				step(0.4, "walk")
+				shake_camera.apply_shake(shake_walk_strength)
 			states.AIM:
 				speed = aim_movespeed
 				step(0.9)

@@ -12,16 +12,22 @@ onready var animation: AnimationPlayer = get_node("Animation")
 onready var walk_timer: Timer = get_node("Movement/WalkTimer")
 onready var flashlight_light: Light2D = get_node("Flashlight/Light")
 onready var flashlight_area: Area2D = get_node("Flashlight/Area")
+onready var shake_camera: Node2D = get_node("Camera2D/ShakeCamera")
 
 export var movespeed: int = 80
 export var runspeed: int = 130
 export var aim_movespeed: int = 20
 export var cameraspeed: float = 0.8
+export var shake_run_strength: float = 10
 export var footstep_file_base: String = "res://assets/sounds/steps/FootstepsConcrete"
 
 onready var weapons: Array = get_node("Weapons").get_children()
 
 var footstep_rng = RandomNumberGenerator.new()
+
+### UI Controller
+onready var player_ui_ammo: Label = get_node("PlayerUI/Ammo/Value")
+onready var player_ui_weapon: Label = get_node("PlayerUI/Weapon/Value")
 
 ### State Variables
 var state: int = states.WALK
@@ -55,6 +61,7 @@ func process_movement():
 			states.RUN:
 				speed = runspeed
 				step(0.25, "run")
+				shake_camera.apply_shake(shake_run_strength)
 			states.WALK:
 				speed = movespeed
 				step(0.4, "walk")
@@ -63,7 +70,6 @@ func process_movement():
 				step(0.9)
 				
 	process_mouse_input()
-	
 	speed_velocity = move_and_slide(velocity.normalized() * speed)
 
 ### Action Management
@@ -115,13 +121,12 @@ func process_run() -> void:
 # Move this input validator function to WeaponInventoryController
 func process_equip() -> void:
 	if Input.is_action_just_pressed("weapon_1"):
-		selected_weapon = weapons[0]
+		equip_weapon(weapons[0])
 	elif Input.is_action_just_pressed("weapon_2"):
-		selected_weapon = weapons[1]
+		equip_weapon(weapons[1])
 	elif Input.is_action_just_pressed("weapon_3"):
-		selected_weapon = weapons[2]
-		
-		
+		equip_weapon(weapons[2])
+
 ### Action Functions - PlayerAction node
 func step(step_time: float, step_animation = "") -> void:
 	if !step_animation.empty():
@@ -135,14 +140,20 @@ func step(step_time: float, step_animation = "") -> void:
 
 func shoot(gun: BaseWeapon) -> void:
 	gun.fire()
+	shake_camera.apply_shake(gun.shake_strength)
+	update_ammo_label()
 
 func reload(gun: BaseWeapon) -> void:
 	gun.reload()
-	
+	update_ammo_label()
+
 func equip_weapon(gun) -> void:
 	selected_weapon = gun
 	selected_weapon.connect("no_ammo", self, "on_no_ammo")
 	
+	update_weapon_label()
+	update_ammo_label()
+
 func kill():
 	get_tree().reload_current_scene()
 
@@ -179,6 +190,12 @@ func is_walking() -> bool:
 func is_running() -> bool:
 	return state == states.RUN
 
+func update_ammo_label() -> void:
+	UIHelper.update_label_value(player_ui_ammo, str(selected_weapon.current_ammo))
+
+func update_weapon_label() -> void:
+	UIHelper.update_label_value(player_ui_weapon, selected_weapon.name)
+
 ### Signals functions
 func on_body_entered(body: Node) -> void:
 	if "Enemy" in body.name:
@@ -189,3 +206,4 @@ func on_timer_timeout() -> void:
 
 func on_no_ammo() -> void:
 	reload(selected_weapon)
+	

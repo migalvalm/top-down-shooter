@@ -25,10 +25,8 @@ z_index = -5
 position = Vector2( 299, 97 )
 enemies_list = [ [ "res://scenes/enemy/enemy.tscn", "Zombie", 1, 10 ] ]
 spawn_cooldown = 1.0
-enemy_amount = 5
 left_gap_position = -190
 right_gap_position = 190
-can_respawn = true
 
 [node name="AmbientSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 8 )

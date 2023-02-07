@@ -16,7 +16,6 @@ road_texture = ExtResource( 3 )
 
 [node name="RoadParallax" parent="." instance=ExtResource( 1 )]
 layer = -100
-visible = false
 
 [node name="WallArea" type="StaticBody2D" parent="."]
 collision_mask = 0

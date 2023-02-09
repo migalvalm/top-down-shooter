@@ -66,7 +66,6 @@ func process_movement():
 			states.WALK:
 				speed = movespeed
 				step(0.4, "walk")
-				shake_camera.apply_shake(shake_walk_strength)
 			states.AIM:
 				speed = aim_movespeed
 				step(0.9)
@@ -84,7 +83,7 @@ func process_actions() -> void:
 
 ### Input Validators - PlayerInput node
 func process_mouse_input() -> void:
-	var mousePos = get_global_mouse_position()
+	var mousePos = get_global_mouse_position() 
 	var space = get_world_2d().direct_space_state
 
 	if space.intersect_point(mousePos, 1):
@@ -94,7 +93,7 @@ func process_mouse_input() -> void:
 			flashlight_light
 			
 	look_at(mousePos)
-	
+
 func process_aim() -> void:
 	if Input.is_action_pressed("aim"):
 		selected_weapon.aim(animation)
@@ -150,6 +149,9 @@ func reload(gun: BaseWeapon) -> void:
 	update_ammo_label()
 
 func equip_weapon(gun) -> void:
+	if is_connected("no_ammo", self, "on_no_ammo"): 
+		disconnect("no_ammo", self, "on_no_ammo")
+
 	selected_weapon = gun
 	selected_weapon.connect("no_ammo", self, "on_no_ammo")
 	

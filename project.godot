@@ -64,6 +64,7 @@ config/icon="res://icon.png"
 
 SoundPlayer="*res://singletones/scenes/sound/sound_player.tscn"
 UIHelper="*res://singletones/scenes/ui/UI_helper.tscn"
+Global="*res://singletones/scenes/helpers/Globals.tscn"
 
 [debug]
 
@@ -71,17 +72,11 @@ gdscript/completion/autocomplete_setters_and_getters=true
 
 [display]
 
-window/size/width=600
-window/size/height=800
-window/size/test_width=600
-window/size/test_height=800
+window/size/width=800
+window/size/test_width=800
+window/size/test_height=600
 window/handheld/orientation="portrait"
 window/stretch/mode="viewport"
-window/stretch/aspect="keep"
-
-[editor_plugins]
-
-enabled=PoolStringArray( "bordered-polygon-2d" )
 
 [importer_defaults]
 

@@ -74,7 +74,7 @@ func shoot():
 		)
 			
 		#Apply rotation and impluse
-		bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 1).rotated(get_player().rotation))
+		bullet_instance.apply_impulse(Vector2(), Vector2(bullet_speed, 0).rotated(get_player().rotation))
 	
 	
 		get_tree().get_root().call_deferred("add_child", bullet_instance)

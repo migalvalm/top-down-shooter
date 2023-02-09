@@ -7,10 +7,10 @@
 script = ExtResource( 2 )
 
 [node name="SpawnPoint1" type="Position2D" parent="SpawnPoints" index="0"]
-position = Vector2( 58.75, -5 )
+position = Vector2( 55, -3.75 )
 
 [node name="SpawnPoint2" type="Position2D" parent="SpawnPoints" index="1"]
-position = Vector2( 58.75, -2.5 )
+position = Vector2( 55, -1.25 )
 
 [node name="SpawnPoint3" type="Position2D" parent="SpawnPoints" index="2"]
-position = Vector2( 58.75, 0 )
+position = Vector2( 55, 1.25 )

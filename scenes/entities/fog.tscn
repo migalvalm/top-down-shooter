@@ -89,4 +89,5 @@ margin_bottom = 1200.0
 grow_horizontal = 0
 texture = SubResource( 7 )
 expand = true
+stretch_mode = 4
 flip_h = true
